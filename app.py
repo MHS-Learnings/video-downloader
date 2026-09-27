@@ -2,58 +2,65 @@ import streamlit as st
 import yt_dlp
 import os
 
-# Page Config
-st.set_page_config(page_title="MHS Pro Downloader", page_icon="⚡", layout="centered")
+# Page Config with Dark Theme enforcement
+st.set_page_config(
+    page_title="MHS Pro Downloader", 
+    page_icon="⚡", 
+    layout="centered",
+    initial_sidebar_state="collapsed"
+)
 
-# Custom Professional CSS Styling (Sjawat aur Pro Look ke liye)
+# Professional Custom Styling
 st.markdown("""
     <style>
-    .main {
-        background-color: #0e1117;
+    .stApp {
+        background-color: #0b0f19;
+        color: #ffffff;
     }
     .stTextInput input {
-        background-color: #1a1c23;
+        background-color: #1f293d;
         color: #ffffff;
-        border-radius: 10px;
-        border: 1px solid #30363d;
-        padding: 10px;
+        border-radius: 12px;
+        border: 1px solid #374151;
+        padding: 12px;
     }
     .stSelectbox select {
-        background-color: #1a1c23;
+        background-color: #1f293d;
         color: #ffffff;
-        border-radius: 10px;
+        border-radius: 12px;
+        border: 1px solid #374151;
     }
     .stButton button {
-        background: linear-gradient(90deg, #ff4b4b 0%, #ff6b81 100%);
+        background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
         color: white;
-        border-radius: 10px;
+        border-radius: 12px;
         font-weight: bold;
         border: none;
         width: 100%;
-        padding: 10px;
-        box-shadow: 0 4px 12px rgba(255, 75, 75, 0.3);
+        padding: 12px;
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
     }
     .stButton button:hover {
-        background: linear-gradient(90deg, #ff3333 0%, #ff5266 100%);
+        background: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
         color: #fff;
     }
-    .card {
-        background-color: #161b22;
-        padding: 20px;
-        border-radius: 15px;
-        border: 1px solid #30363d;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    .pro-card {
+        background-color: #111827;
+        padding: 25px;
+        border-radius: 20px;
+        border: 1px solid #1f2937;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.6);
     }
     </style>
 """, unsafe_allow_html=True)
 
-# App Header
-st.markdown("<h1 style='text-align: center; color: #ffffff;'>⚡ MHS Pro Video Downloader</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #8b949e;'>Aapka apna high-speed professional downloader tool jo har platform ko support karta hai.</p>", unsafe_allow_html=True)
+# Header Section
+st.markdown("<h1 style='text-align: center; color: #f3f4f6;'>⚡ MHS Pro Video Downloader</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #9ca3af;'>Aapka apna high-speed professional downloader tool.</p>", unsafe_allow_html=True)
 
-# Main Container Box
+# Main Box Layout
 with st.container():
-    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown('<div class="pro-card">', unsafe_allow_html=True)
     
     url = st.text_input("🔗 Target Video Link:", placeholder="Yahan YouTube, Facebook ya Instagram ka link paste karein...")
     
@@ -99,7 +106,6 @@ if download_clicked:
 
                 st.success("🎉 Video kamiyabi ke sath tayyar ho gayi hai!")
                 
-                # Stylish Download Button
                 with open(filename, "rb") as file:
                     st.download_button(
                         label="📥 Download File Now",
