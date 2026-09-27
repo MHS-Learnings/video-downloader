@@ -2,34 +2,114 @@ import streamlit as st
 import yt_dlp
 import os
 
-st.title("📥 My Personal Video Downloader")
-st.write("Facebook, YouTube, Instagram ya kisi bhi platform ka link yahan paste karein:")
+# Page Config
+st.set_page_config(page_title="MHS Pro Downloader", page_icon="⚡", layout="centered")
 
-url = st.text_input("Video Link Daalein:")
+# Custom Professional CSS Styling (Sjawat aur Pro Look ke liye)
+st.markdown("""
+    <style>
+    .main {
+        background-color: #0e1117;
+    }
+    .stTextInput input {
+        background-color: #1a1c23;
+        color: #ffffff;
+        border-radius: 10px;
+        border: 1px solid #30363d;
+        padding: 10px;
+    }
+    .stSelectbox select {
+        background-color: #1a1c23;
+        color: #ffffff;
+        border-radius: 10px;
+    }
+    .stButton button {
+        background: linear-gradient(90deg, #ff4b4b 0%, #ff6b81 100%);
+        color: white;
+        border-radius: 10px;
+        font-weight: bold;
+        border: none;
+        width: 100%;
+        padding: 10px;
+        box-shadow: 0 4px 12px rgba(255, 75, 75, 0.3);
+    }
+    .stButton button:hover {
+        background: linear-gradient(90deg, #ff3333 0%, #ff5266 100%);
+        color: #fff;
+    }
+    .card {
+        background-color: #161b22;
+        padding: 20px;
+        border-radius: 15px;
+        border: 1px solid #30363d;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    </style>
+""", unsafe_allow_html=True)
 
-if st.button("Download Video"):
-    if url:
-        with st.spinner("Video download ho rahi hai, zara sabr karein..."):
+# App Header
+st.markdown("<h1 style='text-align: center; color: #ffffff;'>⚡ MHS Pro Video Downloader</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #8b949e;'>Aapka apna high-speed professional downloader tool jo har platform ko support karta hai.</p>", unsafe_allow_html=True)
+
+# Main Container Box
+with st.container():
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    
+    url = st.text_input("🔗 Target Video Link:", placeholder="Yahan YouTube, Facebook ya Instagram ka link paste karein...")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        quality_option = st.selectbox(
+            "🎯 Format / Quality:",
+            ["Best HD Quality", "Audio Only (MP3)", "Fast / Low Size"]
+        )
+    with col2:
+        st.markdown("<br>", unsafe_allow_html=True)
+        download_clicked = st.button("🚀 Start Download")
+        
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# Processing Logic
+if download_clicked:
+    if not url:
+        st.error("⚠️ Pehle koi valid link toh enter karein boss!")
+    else:
+        with st.spinner("🔄 Server video process kar raha hai, zara sabr karein..."):
             try:
-                ydl_opts = {
-                    'format': 'best',
-                    'outtmpl': 'downloaded_video.%(ext)s',
-                }
+                ydl_opts = {'outtmpl': '%(title)s.%(ext)s'}
                 
+                if quality_option == "Audio Only (MP3)":
+                    ydl_opts['format'] = 'bestaudio/best'
+                    ydl_opts['postprocessors'] = [{
+                        'key': 'FFmpegExtractAudio',
+                        'preferredcodec': 'mp3',
+                        'preferredquality': '192',
+                    }]
+                elif quality_option == "Fast / Low Size":
+                    ydl_opts['format'] = 'worst'
+                else:
+                    ydl_opts['format'] = 'best'
+
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                     info = ydl.extract_info(url, download=True)
                     filename = ydl.prepare_filename(info)
+                    
+                    if quality_option == "Audio Only (MP3)":
+                        filename = os.path.splitext(filename)[0] + ".mp3"
+
+                st.success("🎉 Video kamiyabi ke sath tayyar ho gayi hai!")
                 
-                st.success("Video successfully download ho gayi!")
-                
+                # Stylish Download Button
                 with open(filename, "rb") as file:
                     st.download_button(
-                        label="Click Here to Save File",
+                        label="📥 Download File Now",
                         data=file,
-                        file_name=filename,
-                        mime="video/mp4"
+                        file_name=os.path.basename(filename),
+                        mime="application/octet-stream"
                     )
+                
+                if os.path.exists(filename):
+                    os.remove(filename)
+
             except Exception as e:
-                st.error(f"Koi error aa gaya: {e}")
-    else:
-        st.warning("Pehle koi link toh daalein!")
+                st.error(f"❌ Error aagaya: {e}")
